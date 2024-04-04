@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "PWXfgX+MRsK6IR2DReeCqK6iSxAsL5c0VRgMuEvArspxfkFLRbQAH6byX4h1ba7V5VVJkOyyYFzwV8F6WE1JqA==",
+  "dgSpecHash": "r3iy3SiuEsCg5wbKw4p1yN2KEq8nk3FtcwUrg2XBstdjowQqzNvpnIHOwwQyWR6J/8xTfTzUGKBMl0PEqhndYw==",
   "success": true,
   "projectFilePath": "/Users/b260fredin/Documents/WCTC/Term 4/NET Databases/Module 10/BlogConsole/BlogConsole.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/b260fredin/.nuget/packages/nlog/5.1.1/nlog.5.1.1.nupkg.sha512"
+  ],
   "logs": []
 }
