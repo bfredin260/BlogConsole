@@ -27,7 +27,7 @@ do {
                 addBlog(logger, database);
                 break;
             case "3":
-                // createPost();
+                // createPost(logger, database);
                 break;
             case "4":
                 // displayPosts();
@@ -48,26 +48,43 @@ logger.Info("Program ended");
 // -- methods -- //
 
 static void displayAllBlogs(Logger logger, BloggingContext database) {
-    Console.WriteLine("{0} Blogs returned", database.Blogs.Count());
+    try {
+        Console.WriteLine("{0} Blogs returned", database.Blogs.Count());
 
-    if(database.Blogs.Count() > 0) {
-        foreach(Blog blog in database.Blogs) {
-            Console.WriteLine(blog.Name);
+        if(database.Blogs.Count() > 0) {
+            foreach(Blog blog in database.Blogs) {
+                Console.WriteLine(blog.Name);
+            }
         }
+    } catch(Exception e) {
+        Console.WriteLine(e.Message);
     }
 }
 
 static void addBlog(Logger logger, BloggingContext database) {
-    // Create and save a new Blog
-    Console.Write("Enter a name for a new Blog: ");
-    string name = Console.ReadLine();
-    database.AddBlog(
-        new Blog { 
-            Name = name 
-        }
-    );
-    logger.Info("Blog added - {name}", name);
+    try {
+        string name;
+        do {
+            // Create and save a new Blog
+            Console.Write("\nEnter a name for a new Blog: ");
+            name = Console.ReadLine();
 
-    // Display all Blogs from the database
-    var query = database.Blogs.OrderBy(blog => blog.Name);
+            if(!String.IsNullOrEmpty(name)) {
+                database.AddBlog(
+                    new Blog { 
+                        Name = name 
+                    }
+                );
+                logger.Info("Blog added - {name}", name);
+            } else {
+                logger.Warn("Blog name cannot be empty!");
+            }
+        } while(String.IsNullOrEmpty(name));
+    } catch(Exception e) {
+        Console.WriteLine(e.Message);
+    }
+}
+
+static void createPost() {
+    
 }
