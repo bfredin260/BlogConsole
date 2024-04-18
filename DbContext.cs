@@ -13,7 +13,7 @@ public class BloggingContext : DbContext {
 
     public void AddPost(Post post) {
         Posts.Add(post);
-        // SaveChanges();
+        // SaveChanges(); // I don't know why this is causing an Exception
     }
 
     public Blog GetBlogById(int id){

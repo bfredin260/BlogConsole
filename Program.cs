@@ -33,7 +33,7 @@ do {
                 createPost(logger, database);
                 break;
             case "4":
-                // displayPosts();
+                displayPosts(logger, database);
                 break;
             default:
                 logger.Info("Closing Program...");
@@ -73,9 +73,7 @@ static void addBlog(Logger logger, BloggingContext database) {
 
         if(!String.IsNullOrWhiteSpace(name)) {
             database.AddBlog(
-                new Blog { 
-                    Name = name 
-                }
+                new Blog { Name = name }
             );
             logger.Info("Blog added - {name}", name);
         } else {
@@ -128,4 +126,33 @@ static void createPost(Logger logger, BloggingContext database) {
         logger.Error("Invalid Blog Id");
     }
     
+}
+
+static void displayPosts(Logger logger, BloggingContext database) {
+    Console.WriteLine("Select the blog's posts to display:\n0) Posts from all blogs");
+    foreach(Blog blog in database.Blogs) Console.WriteLine($"{blog.BlogId}) Posts from \"{blog.Name}\"");
+    string input = Console.ReadLine();
+    switch(input) {
+        case "0": 
+            Console.WriteLine($"{database.Posts.Count()} post(s) returned");
+            foreach(Post post in database.Posts) Console.WriteLine($"Blog: {post.Blog.Name}\nTitle: {post.Title}\nContent: {post.Content}\n"); 
+            break;
+        default:
+            int blogId;
+            if(int.TryParse(input, out blogId)) {
+                if(blogId > 0 && blogId < database.Blogs.Count() + 1) {
+                    int postCount = 0;
+                    foreach(Post post in database.Posts) if(post.BlogId == blogId) postCount++;
+
+                    Console.WriteLine($"{postCount} post(s) returned");
+                    foreach(Post post1 in database.Posts) if(post1.BlogId == blogId) Console.WriteLine($"Blog: {post1.Blog.Name}\nTitle: {post1.Title}\nContent: {post1.Content}\n"); 
+
+                    // [WARNING] This part doesn't work currently, I don't understand why but the database won't let me SaveChanges()
+                    //           after adding a new Post to the DbSet Posts.
+                }
+                else logger.Error("There are no Blogs saved with that Id");
+            }
+            else logger.Error("Enter a valid Id");
+            break;
+    }
 }
