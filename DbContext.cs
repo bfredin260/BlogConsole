@@ -7,8 +7,18 @@ public class BloggingContext : DbContext {
     public DbSet<Post> Posts { get; set; }
 
     public void AddBlog(Blog blog) {
-        this.Blogs.Add(blog);
-        this.SaveChanges();
+        Blogs.Add(blog);
+        SaveChanges();
+    }
+
+    public void AddPost(Post post) {
+        Posts.Add(post);
+        // SaveChanges();
+    }
+
+    public Blog GetBlogById(int id){
+        foreach(Blog blog in Blogs) if(blog.BlogId == id) return blog;
+        return null;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
