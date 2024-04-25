@@ -15,10 +15,10 @@ var database = new BloggingContext();
 
 string selection;
 do {
-    Console.WriteLine("\nEnter your selection:\n1) Display all blogs\n2) Add Blog\n3) Create Post\n4) Display Posts\nEnter q to quit");
+    Console.WriteLine("\nEnter your selection:\n1) Display all blogs\n2) Add Blog\n3) Create Post\n4) Display Posts\n5) Delete Blog\n6) Edit Blog\nEnter q to quit");
     selection = Console.ReadLine();
 
-    if(selection == "1" || selection == "2" || selection == "3" || selection == "4" || selection == "q") {
+    if(selection == "1" || selection == "2" || selection == "3" || selection == "4" || selection == "5" || selection == "6" ||selection == "q") {
         Console.WriteLine();
         logger.Info("Option \"{0}\" selected", selection);
 
@@ -34,6 +34,12 @@ do {
                 break;
             case "4":
                 displayPosts(logger, database);
+                break;
+            case "5":
+                deleteBlog(logger, database);
+                break;
+            case "6":
+                editBlog(logger, database);
                 break;
             default:
                 logger.Info("Closing Program...");
@@ -155,4 +161,46 @@ static void displayPosts(Logger logger, BloggingContext database) {
             else logger.Error("Enter a valid Id");
             break;
     }
+}
+
+static void deleteBlog(Logger logger, BloggingContext database) {
+    Console.WriteLine("Choose the blog to delete:");
+    var blog = GetBlog(logger, database);
+    if (blog != null)
+    {
+       
+        database.DeleteBlog(blog);
+        logger.Info($"Blog (id: {blog.BlogId}) deleted");
+    }
+}
+
+static void editBlog(Logger logger, BloggingContext database) {
+    // edit blog
+            Console.WriteLine("Choose the blog to edit:");
+            var blog = GetBlog(logger, database);
+            if (blog != null)
+            {
+                // TODO: input blog
+            }
+}
+
+
+static Blog GetBlog(Logger logger, BloggingContext database)
+{
+    // display all blogs
+    var blogs = database.Blogs.OrderBy(b => b.BlogId);
+    foreach (Blog b in blogs)
+    {
+        Console.WriteLine($"{b.BlogId}: {b.Name}");
+    }
+    if (int.TryParse(Console.ReadLine(), out int BlogId))
+    {
+        Blog blog = database.Blogs.FirstOrDefault(b => b.BlogId == BlogId);
+        if (blog != null)
+        {
+            return blog;
+        }
+    }
+    logger.Error("Invalid Blog Id");
+    return null;
 }

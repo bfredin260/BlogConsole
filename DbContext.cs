@@ -16,6 +16,11 @@ public class BloggingContext : DbContext {
         // SaveChanges(); // I don't know why this is causing an Exception
     }
 
+    public void DeleteBlog(Blog blog) {
+        this.Blogs.Remove(blog);
+        this.SaveChanges();
+    }
+
     public Blog GetBlogById(int id){
         foreach(Blog blog in Blogs) if(blog.BlogId == id) return blog;
         return null;
