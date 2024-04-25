@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using NLog;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Transactions;
@@ -71,22 +72,11 @@ static void displayAllBlogs(Logger logger, BloggingContext database) {
 }
 
 static void addBlog(Logger logger, BloggingContext database) {
-    try {
-        string name;
-        // Create and save a new Blog
-        Console.Write("\nEnter a name for a new Blog: ");
-        name = Console.ReadLine();
-
-        if(!String.IsNullOrWhiteSpace(name)) {
-            database.AddBlog(
-                new Blog { Name = name }
-            );
-            logger.Info("Blog added - {name}", name);
-        } else {
-            logger.Error("Blog name cannot be null");
-        }
-    } catch(Exception e) {
-        Console.WriteLine(e.Message);
+    Blog blog = InputBlog(logger, database);
+    if (blog != null) {
+        //blog.BlogId = BlogId;
+        database.AddBlog(blog);
+        logger.Info("Blog added - {name}", blog.Name);
     }
 }
 
@@ -168,7 +158,14 @@ static void deleteBlog(Logger logger, BloggingContext database) {
     var blog = GetBlog(logger, database);
     if (blog != null)
     {
-       
+       // input blog
+        Blog UpdatedBlog = InputBlog(logger, database);
+        if (UpdatedBlog != null)
+        {
+            UpdatedBlog.BlogId = blog.BlogId;
+            database.EditBlog(UpdatedBlog);
+            logger.Info($"Blog (id: {blog.BlogId}) updated");
+        }
         database.DeleteBlog(blog);
         logger.Info($"Blog (id: {blog.BlogId}) deleted");
     }
@@ -180,7 +177,7 @@ static void editBlog(Logger logger, BloggingContext database) {
             var blog = GetBlog(logger, database);
             if (blog != null)
             {
-                // TODO: input blog
+
             }
 }
 
@@ -202,5 +199,30 @@ static Blog GetBlog(Logger logger, BloggingContext database)
         }
     }
     logger.Error("Invalid Blog Id");
+    return null;
+}
+
+
+static Blog InputBlog(Logger logger, BloggingContext database)
+{
+    Blog blog = new Blog();
+    Console.WriteLine("Enter the Blog name");
+    blog.Name = Console.ReadLine();
+
+    ValidationContext context = new ValidationContext(blog, null, null);
+    List<ValidationResult> results = new List<ValidationResult>();
+
+    var isValid = Validator.TryValidateObject(blog, context, results, true);
+    if (isValid)
+    {
+        return blog;
+    }
+    else
+    {
+        foreach (var result in results)
+        {
+            logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+        }
+    }
     return null;
 }

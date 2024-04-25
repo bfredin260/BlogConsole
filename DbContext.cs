@@ -21,6 +21,12 @@ public class BloggingContext : DbContext {
         this.SaveChanges();
     }
 
+    public void EditBlog(Blog UpdatedBlog) {
+        Blog blog = this.Blogs.Find(UpdatedBlog.BlogId);
+        blog.Name = UpdatedBlog.Name;
+        this.SaveChanges();
+    }
+
     public Blog GetBlogById(int id){
         foreach(Blog blog in Blogs) if(blog.BlogId == id) return blog;
         return null;
